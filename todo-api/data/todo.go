@@ -7,23 +7,28 @@ import (
 )
 
 type Todo struct {
-	ID        int
-	Name      string
-	Description string
-	Deadline string
-	StartedAt string
-	isDone bool
-	CreatedAt string
-	Author string
+	ID          int    `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Deadline    string `json:"deadline"`
+	StartedAt   string `json:"startedAt"`
+	IsDone      bool   `json:"isDone"`
+	CreatedAt   string `json:"createdAt"`
+	Author      string `json:"author"`
 }
 
 type Todos []*Todo
 
 func (todos Todos) ToJSON(w io.Writer) error {
-	e := json.NewEncoder(w)
-	return e.Encode(todos)
+	encoder := json.NewEncoder(w)
+	return encoder.Encode(todos)
 }
 
+func (todo *Todo) FromJSON(r io.Reader) error {
+	decoder := json.NewDecoder(r)
+	return decoder.Decode(todo)
+}
+ 
 func GetTodos() Todos {
 	return TodosList
 }
@@ -34,7 +39,7 @@ func AddTodo(todo *Todo) {
 }
 
 func getNextID() int {
-	return TodosList[len(TodosList) - 1].ID + 1
+	return TodosList[len(TodosList)-1].ID + 1
 }
 
 var TodosList = Todos{
@@ -49,7 +54,7 @@ var TodosList = Todos{
 		Name:      "Todo 2",
 		StartedAt: time.Now().UTC().String(),
 		Deadline:  time.Now().UTC().Add(time.Hour * time.Duration(5)).String(),
-		isDone: true,
+		IsDone:    true,
 	},
 	&Todo{
 		ID:        3,
